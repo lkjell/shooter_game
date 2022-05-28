@@ -16,7 +16,7 @@ The program should work until the user clicks on the red x
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout
 
 # from PyQt6.QtCore import Qt
 # from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout
@@ -39,7 +39,7 @@ text = QLabel('Click to find out the winner')
 winner = QLabel('?')
 
 # widget layout
-line = QVBoxLayout()
+line = QHBoxLayout()
 line.addWidget(text, alignment=Qt.AlignCenter)
 line.addWidget(winner, alignment=Qt.AlignCenter)
 line.addWidget(button, alignment=Qt.AlignCenter)
