@@ -6,7 +6,6 @@ from random import randint
 
 def generate_random():
     label.setText("The winner:")
-    label.hide()
     x = randint(1, 100)
     label1.setText(str(x))
 
