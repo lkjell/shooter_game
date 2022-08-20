@@ -4,10 +4,18 @@ from PyQt5.QtWidgets import (QApplication, QWidget,
 
 from random import randint
 
+
+data = []
+
 def generate_random():
     label.setText("The winner:")
-    x = randint(1, 100)
-    label1.setText(str(x))
+    x = randint(1, 49)
+    data.append(str(x))
+
+    if len(data) > 6:
+        button.hide()
+
+    label1.setText(",".join(data))
 
 
 app = QApplication([])
@@ -23,7 +31,7 @@ label1 = QLabel("?")
 button = QPushButton("Generate")
 button.clicked.connect(generate_random)
 
-layout = QVBoxLayout()
+layout = QHBoxLayout()
 my_win.setLayout(layout)  # la hoved vindu ha vertikal layout.
 
 # pyqt5

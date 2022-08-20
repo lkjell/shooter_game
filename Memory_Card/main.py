@@ -4,6 +4,28 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QRadioButton,
                              QMessageBox, QGroupBox, QButtonGroup)
 
+questions_db = [
+    ("Which nationality does not exist?", "Smufts", "Enets", "Chulyms", "Aleuts"),
+    ("Who is coolest?", "Me", "You", "John", "Mia"),
+    ("Which is a country?", "Spain", "Paris", "Oslo", "Moon"),
+    ("Where is hottest?", "Sun", "Earth", "Moon", "Jupiter"),
+    ("What color comes first in the rainbow?", "Red", "Yellow", "Purple", "Green"),
+    ("What is not alive?", "France", "Fox", "Bird", "Snake"),
+    ('This is a copy of a Kahoot question?.', 'YESSSSS', 'ok', 'NOOOOOOO', ':)'),
+]
+
+# class Question:
+#     def __init__(self, text, r, w1, w2, w3):
+#         self.text = text
+#         self.right = r
+#         self.wrong1 = w1
+#         self.wrong2 = w2
+#         self.wrong3 = w3
+#
+#
+# questions_db = [Question("Who is coolest?", "Me", "You", "John", "Mia"),
+#                 Question("Which is a country?", "Spain", "Paris", "Oslo", "Moon"),]
+
 
 def show_result():
     RadioGroupBox.hide()
@@ -24,16 +46,35 @@ def show_questions():
     RadioGroup.setExclusive(True)
 
 
-def ask(question, right_answer, wrong1, wrong2, wrong3):
-    shuffle(answer)
-    answer[0].setText(right_answer)
-    answer[1].setText(wrong1)
-    answer[2].setText(wrong2)
-    answer[3].setText(wrong3)
+#
+def ask(question_text, right_answer, wrong1, wrong2, wrong3):
+    shuffle(answers)
+    answers[0].setText(right_answer)
+    answers[1].setText(wrong1)
+    answers[2].setText(wrong2)
+    answers[3].setText(wrong3)
+    ans_correct.setText(right_answer)
+    question.setText(question_text)
+
+
+# Check if you have pressed the correct button
+def check_answer():
+    if answers[0].isChecked():
+        ans_result.setText("Correct!")
+        ans_correct.setText("Correct answer.")
+        show_result()
+    else:
+        for a in answers[0:]:
+            if a.isChecked():
+                ans_result.setText("Incorrect!")
+                ans_correct.setText("Incorrect answer.")
+                show_result()
+                break
+
 
 def start_test():
     if answer_button.text() == "Answer":
-        show_result()
+        check_answer()
     else:
         show_questions()
 
@@ -43,7 +84,7 @@ app = QApplication([])
 # main window:
 my_win = QWidget()
 my_win.setWindowTitle('Memory Card')
-my_win.move(100, 100)
+my_win.move(500, 500)
 my_win.resize(400, 200)
 
 # Widgets
@@ -73,6 +114,14 @@ AnsGroupBox.hide()
 
 answer_button = QPushButton("Answer")
 answer_button.clicked.connect(start_test)
+
+# init questions
+# ask("Who is coolest", "Me", "You", "You", "You1")
+# ask(questions_db[0][0],
+#     questions_db[0][1],
+#     questions_db[0][2],
+#     questions_db[0][3],
+#     questions_db[0][4])
 
 # Layout
 
