@@ -16,17 +16,17 @@ questions_db = [
 
 question_index = 0
 
-# class Question:
-#     def __init__(self, text, r, w1, w2, w3):
-#         self.text = text
-#         self.right = r
-#         self.wrong1 = w1
-#         self.wrong2 = w2
-#         self.wrong3 = w3
-#
-#
-# questions_db = [Question("Who is coolest?", "Me", "You", "John", "Mia"),
-#                 Question("Which is a country?", "Spain", "Paris", "Oslo", "Moon"),]
+
+class Question:
+    def __init__(self, text, r, w1, w2, w3):
+        self.question_text = text
+        self.right_answer = r
+        self.wrong1 = w1
+        self.wrong2 = w2
+        self.wrong3 = w3
+
+
+questions_db = [Question(*q) for q in questions_db]
 
 
 def show_result():
@@ -49,27 +49,36 @@ def show_questions():
 
 
 #
-def ask(question_text, right_answer, wrong1, wrong2, wrong3):
+# def ask(question_text, right_answer, wrong1, wrong2, wrong3):
+#     shuffle(answers)
+#     answers[0].setText(right_answer)
+#     answers[1].setText(wrong1)
+#     answers[2].setText(wrong2)
+#     answers[3].setText(wrong3)
+#     ans_correct.setText(right_answer)
+#     question.setText(question_text)
+
+def ask(q: Question):
     shuffle(answers)
-    answers[0].setText(right_answer)
-    answers[1].setText(wrong1)
-    answers[2].setText(wrong2)
-    answers[3].setText(wrong3)
-    ans_correct.setText(right_answer)
-    question.setText(question_text)
+    answers[0].setText(q.right_answer)
+    answers[1].setText(q.wrong1)
+    answers[2].setText(q.wrong2)
+    answers[3].setText(q.wrong3)
+    ans_correct.setText(q.right_answer)
+    question.setText(q.question_text)
 
 
 # Check if you have pressed the correct button
 def check_answer():
     if answers[0].isChecked():
         ans_result.setText("Correct!")
-        # ans_correct.setText("Correct answer.")
+        ans_correct.setText("Correct answer.")
         show_result()
     else:
         for a in answers[0:]:
             if a.isChecked():
                 ans_result.setText("Incorrect!")
-                # ans_correct.setText("Incorrect answer.")
+                ans_correct.setText("Incorrect answer.")
                 show_result()
                 break
 
@@ -78,13 +87,16 @@ def start_test():
     if answer_button.text() == "Answer":
         check_answer()
     else:
-        show_questions()
-        global question_index
-        question_index += 1
-        if question_index >= len(questions_db):
-            question_index = 0
+        if answers[0].isChecked():
+            global question_index
+            question_index += 1
+            if question_index >= len(questions_db):
+                question_index = 0
 
-        ask(*questions_db[question_index])
+            # ask(*questions_db[question_index])
+            ask(questions_db[question_index])
+
+        show_questions()
 
 
 app = QApplication([])
@@ -131,7 +143,7 @@ answer_button.clicked.connect(start_test)
 #     questions_db[0][3],
 #     questions_db[0][4])
 
-ask(*questions_db[question_index])
+ask(questions_db[question_index])
 
 # Layout
 
