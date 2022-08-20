@@ -14,6 +14,8 @@ questions_db = [
     ('This is a copy of a Kahoot question?.', 'YESSSSS', 'ok', 'NOOOOOOO', ':)'),
 ]
 
+question_index = 0
+
 # class Question:
 #     def __init__(self, text, r, w1, w2, w3):
 #         self.text = text
@@ -61,13 +63,13 @@ def ask(question_text, right_answer, wrong1, wrong2, wrong3):
 def check_answer():
     if answers[0].isChecked():
         ans_result.setText("Correct!")
-        ans_correct.setText("Correct answer.")
+        # ans_correct.setText("Correct answer.")
         show_result()
     else:
         for a in answers[0:]:
             if a.isChecked():
                 ans_result.setText("Incorrect!")
-                ans_correct.setText("Incorrect answer.")
+                # ans_correct.setText("Incorrect answer.")
                 show_result()
                 break
 
@@ -77,6 +79,12 @@ def start_test():
         check_answer()
     else:
         show_questions()
+        global question_index
+        question_index += 1
+        if question_index >= len(questions_db):
+            question_index = 0
+
+        ask(*questions_db[question_index])
 
 
 app = QApplication([])
@@ -122,6 +130,8 @@ answer_button.clicked.connect(start_test)
 #     questions_db[0][2],
 #     questions_db[0][3],
 #     questions_db[0][4])
+
+ask(*questions_db[question_index])
 
 # Layout
 
