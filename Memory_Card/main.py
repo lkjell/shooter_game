@@ -1,4 +1,4 @@
-from random import shuffle
+from random import shuffle, randrange
 from PyQt5.QtCore import Qt
 
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QRadioButton,
@@ -8,13 +8,27 @@ questions_db = [
     ("Which nationality does not exist?", "Smufts", "Enets", "Chulyms", "Aleuts"),
     ("Who is coolest?", "Me", "You", "John", "Mia"),
     ("Which is a country?", "Spain", "Paris", "Oslo", "Moon"),
-    ("Where is hottest?", "Sun", "Earth", "Moon", "Jupiter"),
-    ("What color comes first in the rainbow?", "Red", "Yellow", "Purple", "Green"),
-    ("What is not alive?", "France", "Fox", "Bird", "Snake"),
-    ('This is a copy of a Kahoot question?.', 'YESSSSS', 'ok', 'NOOOOOOO', ':)'),
+    # ("Where is hottest?", "Sun", "Earth", "Moon", "Jupiter"),
+    # ("What color comes first in the rainbow?", "Red", "Yellow", "Purple", "Green"),
+    # ("What is not alive?", "France", "Fox", "Bird", "Snake"),
+    # ('This is a copy of a Kahoot question?.', 'YESSSSS', 'ok', 'NOOOOOOO', ':)'),
 ]
 
-question_index = 0
+questions_db2 = []
+
+question_index = -1
+
+
+def random_idx():
+    global question_index
+    i = randrange(0, len(questions_db))
+
+    while i == question_index:
+        i = randrange(0, len(questions_db))
+
+    question_index = i
+
+    return question_index
 
 
 class Question:
@@ -88,13 +102,21 @@ def start_test():
         check_answer()
     else:
         if answers[0].isChecked():
-            global question_index
-            question_index += 1
-            if question_index >= len(questions_db):
-                question_index = 0
+            # question_index += 1
+            # if question_index >= len(questions_db):
+            #     question_index = 0
 
             # ask(*questions_db[question_index])
-            ask(questions_db[question_index])
+
+            # global question_index
+            # i = randrange(0, len(questions_db))
+            #
+            # while i == question_index:
+            #     i = randrange(0, len(questions_db))
+            #
+            # question_index = i
+
+            ask(questions_db[random_idx()])
 
         show_questions()
 
@@ -122,6 +144,7 @@ answers = [button1, button2, button3, button4]
 RadioGroup = QButtonGroup()
 for btn in answers:
     RadioGroup.addButton(btn)
+
 # RadioGroup.addButton(button1)
 # RadioGroup.addButton(button2)
 # RadioGroup.addButton(button3)
@@ -143,7 +166,7 @@ answer_button.clicked.connect(start_test)
 #     questions_db[0][3],
 #     questions_db[0][4])
 
-ask(questions_db[question_index])
+ask(questions_db[random_idx()])
 
 # Layout
 
