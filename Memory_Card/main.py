@@ -1,3 +1,4 @@
+import os
 from random import shuffle, randrange
 from PyQt5.QtCore import Qt
 
@@ -14,12 +15,11 @@ questions_db = [
     # ('This is a copy of a Kahoot question?.', 'YESSSSS', 'ok', 'NOOOOOOO', ':)'),
 ]
 
-questions_db2 = []
-
 question_index = -1
 
 
 def random_idx():
+    # Random med tilbakelegging, men ikke 2 like etterhverandre
     global question_index
     i = randrange(0, len(questions_db))
 
@@ -29,6 +29,20 @@ def random_idx():
     question_index = i
 
     return question_index
+
+
+def random_idx2():
+    # Random uten tilbakelegging
+    global questions_db
+    # global questions_db2
+
+    if len(questions_db) == 0:
+        questions_db = list(questions_db2)
+
+    i = randrange(len(questions_db))
+    q = questions_db.pop(i)
+
+    return q
 
 
 class Question:
@@ -41,9 +55,16 @@ class Question:
 
 
 questions_db = [Question(*q) for q in questions_db]
+questions_db2 = list(questions_db)
+
+total_question_answer = 0
+total_question_correct = 0
 
 
 def show_result():
+    global total_question_answer
+    total_question_answer += 1
+
     RadioGroupBox.hide()
     AnsGroupBox.show()
     answer_button.setText("Next question")
@@ -73,6 +94,9 @@ def show_questions():
 #     question.setText(question_text)
 
 def ask(q: Question):
+    # global total_question_answer
+    # total_question_answer += 1
+
     shuffle(answers)
     answers[0].setText(q.right_answer)
     answers[1].setText(q.wrong1)
@@ -85,6 +109,9 @@ def ask(q: Question):
 # Check if you have pressed the correct button
 def check_answer():
     if answers[0].isChecked():
+        global total_question_correct
+        total_question_correct += 1
+
         ans_result.setText("Correct!")
         ans_correct.setText("Correct answer.")
         show_result()
@@ -95,6 +122,11 @@ def check_answer():
                 ans_correct.setText("Incorrect answer.")
                 show_result()
                 break
+
+    os.system("clear")
+    # os.system("cls")
+    print("Total question answer", total_question_answer)
+    print("Total question correct", total_question_correct)
 
 
 def start_test():
@@ -116,7 +148,8 @@ def start_test():
             #
             # question_index = i
 
-            ask(questions_db[random_idx()])
+            # ask(questions_db[random_idx()])
+            ask(random_idx2())
 
         show_questions()
 
@@ -166,7 +199,8 @@ answer_button.clicked.connect(start_test)
 #     questions_db[0][3],
 #     questions_db[0][4])
 
-ask(questions_db[random_idx()])
+# ask(questions_db[random_idx()])
+ask(random_idx2())
 
 # Layout
 
