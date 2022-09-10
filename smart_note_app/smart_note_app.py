@@ -17,6 +17,7 @@ class Pupil:
     def __repr__(self):
         return f"{self.name} {self.surname}"
 
+
 def parse_elev(s):
     name, surname, grade = s.split(" ")
     return name, surname, int(grade)
@@ -30,7 +31,19 @@ with open("elev.txt", "r") as f:
         # pupil.print_info()
         pupil_db.append(pupil)
 
+# with open("elev1.txt", "w") as f:
+#     for pupil in pupil_db:
+#         print("{} {} {}".format(pupil.name, pupil.surname, pupil.grade), file=f)
 
-with open("elev1.txt", "w") as f:
-    for pupil in pupil_db:
-        print("{} {} {}".format(pupil.name, pupil.surname, pupil.grade), file=f)
+k = 0
+grade = 5
+
+
+def sort_key(k):
+    return -k.grade
+
+
+p = sorted(pupil_db, key=sort_key)
+print(p[0].grade)
+print(p[1].grade)
+print(p[2].grade)
