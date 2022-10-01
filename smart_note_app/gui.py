@@ -47,6 +47,11 @@ def add_note():
         note_db[note_name] = {"text": "", "tags": []}
         note_list.addItem(note_name)
 
+    if not note_list.selectedItems():
+        note_list.setCurrentRow(0)
+    else:
+        note_list.setCurrentRow(len(note_list) - 1)
+
 
 def delete_note():
     if note_list.selectedItems():
@@ -63,8 +68,14 @@ def save_note():
     if note_list.selectedItems():
         key = note_list.selectedItems()[0].text()
         note_db[key]["text"] = note_text_edit.toPlainText()
-        with open("note_db.json", "w") as f:
-            json.dump(note_db, f, indent=2)
+
+    save_note_()
+
+
+def save_note_():
+    with open("note_db.json", "w") as f:
+        json.dump(note_db, f, indent=2, ensure_ascii=False)
+        print("Saving to file note_db.json")
 
 
 create_note_btn.clicked.connect(add_note)
@@ -77,21 +88,57 @@ tag_label = QLabel("List of tags")
 tag_list = QListWidget()
 create_tag = QLineEdit("")
 create_tag.setPlaceholderText("Enter tag...")
-add_tag2note = QPushButton("Add tag")
+add_tag2note_btn = QPushButton("Add tag")
 
-untag_from_note = QPushButton("Untag from note")
-search_tag = QPushButton("Search note by tag")
+untag_from_note_btn = QPushButton("Untag from note")
+search_tag_btn = QPushButton("Search note by tag")
 
 tag_create_delete_layout = QHBoxLayout()
-tag_create_delete_layout.addWidget(add_tag2note)
-tag_create_delete_layout.addWidget(untag_from_note)
+tag_create_delete_layout.addWidget(add_tag2note_btn)
+tag_create_delete_layout.addWidget(untag_from_note_btn)
 
 tag_layout = QVBoxLayout()
 tag_layout.addWidget(tag_label)
 tag_layout.addWidget(tag_list)
 tag_layout.addWidget(create_tag)
 tag_layout.addLayout(tag_create_delete_layout)
-tag_layout.addWidget(search_tag)
+tag_layout.addWidget(search_tag_btn)
+
+
+def add_tag():
+    if not note_list.selectedItems():
+        return
+
+    key = note_list.selectedItems()[0].text()
+    tag_name = create_tag.text()
+    tags = note_db[key]["tags"]
+
+    if tag_name != "" and tag_name not in tags:
+        tags.append(tag_name)
+        tag_list.addItem(tag_name)
+        save_note_()
+
+
+def untag():
+    if not note_list.selectedItems():
+        return
+
+    if not tag_list.selectedItems():
+        return
+
+    note_name = note_list.selectedItems()[0].text()
+    tag_name = tag_list.selectedItems()[0].text()
+    tags = note_db[note_name]["tags"]
+    tags.remove(tag_name)
+
+    row = tag_list.currentRow()
+    tag_list.takeItem(row)
+
+    save_note_()
+
+
+add_tag2note_btn.clicked.connect(add_tag)
+untag_from_note_btn.clicked.connect(untag)
 
 # Create note text edit
 note_text_edit = QTextEdit()
