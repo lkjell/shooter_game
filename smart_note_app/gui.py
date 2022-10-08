@@ -57,6 +57,7 @@ def delete_note():
     if note_list.selectedItems():
         key = note_list.selectedItems()[0].text()
         del note_db[key]
+        tag_list.clear()
         row = note_list.currentRow()
         note_list.takeItem(row)
 
@@ -75,7 +76,7 @@ def save_note():
 def save_note_():
     with open("note_db.json", "w") as f:
         json.dump(note_db, f, indent=2, ensure_ascii=False)
-        print("Saving to file note_db.json")
+        print("Saving")
 
 
 create_note_btn.clicked.connect(add_note)
@@ -137,11 +138,66 @@ def untag():
     save_note_()
 
 
+def load_note_db():
+    try:
+        with open("note_db.json", "r") as f:
+            global note_db
+            note_db = json.load(f)
+            print("Loading")
+
+        for note_name in note_db:
+            note_list.addItem(note_name)
+
+        note_list.setCurrentRow(0)
+
+    except Exception as e:
+        print(e)
+        pass
+
+
+def select_note(note_name):
+    try:
+        tags = note_db[note_name]["tags"]
+        note_text = note_db[note_name]["text"]
+        note_text_edit.setText(note_text)
+
+        tag_list.clear()
+        for t in tags:
+            tag_list.addItem(t)
+    except KeyError:
+        pass
+
+
+def search_note():
+    tag_name = create_tag.text()
+
+    note_list.clear()
+    if tag_name == "":
+        for note_name in note_db:
+            note_list.addItem(note_name)
+    else:
+        for note_name, value in note_db.items():
+            tags = value["tags"]
+            if tag_name in tags:
+                note_list.addItem(note_name)
+
+
+def textChanged():
+    if not note_list.selectedItems():
+        return
+
+    save_note()
+
+
+note_list.currentTextChanged.connect(select_note)
+
 add_tag2note_btn.clicked.connect(add_tag)
 untag_from_note_btn.clicked.connect(untag)
+search_tag_btn.clicked.connect(search_note)
 
 # Create note text edit
 note_text_edit = QTextEdit()
+note_text_edit.textChanged.connect(textChanged)
 
 layout_note_tag = QVBoxLayout()
 layout_note_tag.addLayout(note_layout)
@@ -153,5 +209,6 @@ layout_main.addLayout(layout_note_tag, stretch=1)
 
 my_win.setLayout(layout_main)
 
+load_note_db()
 my_win.show()
 app.exec_()
