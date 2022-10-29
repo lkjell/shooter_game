@@ -10,8 +10,9 @@ from PyQt5.QtWidgets import QListWidget
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtWidgets import QInputDialog
+from PyQt5.QtWidgets import QFileDialog
 
-from imagelib import ImageFilter
+# from imagelib import ImageFilter
 
 app = QApplication([])
 
@@ -23,6 +24,32 @@ my_win.resize(700, 600)
 
 folder_btn = QPushButton("Folder")
 image_list = QListWidget()
+
+
+def chooseWorkingDir():
+    workdir = QFileDialog.getExistingDirectory()
+    return workdir
+
+
+def find_image_files(files, extensions):
+    result = [f for f in files if f.suffix in extensions]
+
+    return result
+
+
+def showFilenameList():
+    from pathlib import Path
+    extensions = [".jpg", ".jpeg", ".png"]
+
+    cwd = Path(chooseWorkingDir())  # current working directory
+    filenames = cwd.iterdir()
+
+    filenames = find_image_files(filenames, extensions)
+    for f in filenames:
+        image_list.addItem(str(f.name))
+
+
+folder_btn.clicked.connect(showFilenameList)
 
 # layout 1
 list_layout = QVBoxLayout()
