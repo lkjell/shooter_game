@@ -1,19 +1,11 @@
-import os
-import json
-from random import shuffle, randrange
-from PyQt5.QtCore import Qt
-
-from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QRadioButton,
-                             QMessageBox, QGroupBox, QButtonGroup)
+from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout)
 
 from PyQt5.QtWidgets import QListWidget
-from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtWidgets import QTextEdit
-from PyQt5.QtWidgets import QInputDialog
 from PyQt5.QtWidgets import QFileDialog
+
 from pathlib import Path
 
-# from imagelib import ImageFilter
+from image_processing.imagelib import ImageProcess
 
 app = QApplication([])
 
@@ -38,9 +30,13 @@ def find_image_files(files, extensions):
     return result
 
 
+cwd = Path("./")
+
+
 def showFilenameList():
     extensions = [".jpg", ".jpeg", ".png", ".webp"]
 
+    global cwd
     cwd = Path(chooseWorkingDir())  # current working directory
     filenames = cwd.iterdir()
 
@@ -48,9 +44,12 @@ def showFilenameList():
     for f in filenames:
         image_list.addItem(str(f.name))
 
+
 def select_image(image_name):
-    print(image_name)
-    pass
+    image_path = str(cwd / image_name)
+    im = ImageProcess(image_path, image_area)
+    # im.filename = image_path
+    im.show()
     # try:
     #     tags = note_db[note_name]["tags"]
     #     note_text = note_db[note_name]["text"]
@@ -61,6 +60,7 @@ def select_image(image_name):
     #         tag_list.addItem(t)
     # except KeyError:
     #     pass
+
 
 folder_btn.clicked.connect(showFilenameList)
 image_list.currentTextChanged.connect(select_image)
@@ -97,6 +97,8 @@ layout_main.addLayout(list_layout, 20)
 layout_main.addLayout(image_layout, 80)
 
 my_win.setLayout(layout_main)
+
+# im = ImageProcess("./", image_area)
 
 my_win.show()
 app.exec_()
