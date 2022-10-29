@@ -69,7 +69,7 @@ class ImageEditor:
 
 
 if __name__ == "__main__":
-    imageEditor = ImageEditor("original.jpg")
+    imageEditor = ImageEditor("../images/original.jpg")
     imageEditor.grey()
     imageEditor.mirror()
     # imageEditor.blur()

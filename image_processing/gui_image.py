@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtWidgets import QInputDialog
 from PyQt5.QtWidgets import QFileDialog
+from pathlib import Path
 
 # from imagelib import ImageFilter
 
@@ -38,8 +39,7 @@ def find_image_files(files, extensions):
 
 
 def showFilenameList():
-    from pathlib import Path
-    extensions = [".jpg", ".jpeg", ".png"]
+    extensions = [".jpg", ".jpeg", ".png", ".webp"]
 
     cwd = Path(chooseWorkingDir())  # current working directory
     filenames = cwd.iterdir()
@@ -48,8 +48,22 @@ def showFilenameList():
     for f in filenames:
         image_list.addItem(str(f.name))
 
+def select_image(image_name):
+    print(image_name)
+    pass
+    # try:
+    #     tags = note_db[note_name]["tags"]
+    #     note_text = note_db[note_name]["text"]
+    #     note_text_edit.setText(note_text)
+    #
+    #     tag_list.clear()
+    #     for t in tags:
+    #         tag_list.addItem(t)
+    # except KeyError:
+    #     pass
 
 folder_btn.clicked.connect(showFilenameList)
+image_list.currentTextChanged.connect(select_image)
 
 # layout 1
 list_layout = QVBoxLayout()
