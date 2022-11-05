@@ -33,6 +33,15 @@ class ImageEditor:
             self.open()
 
         self.image = self.image.convert("L")
+        # self.image = self.image.convert("RGB")
+        #
+        # x, y = self.image.size
+        # for i in range(x):
+        #     for j in range(y):
+        #         pixel = self.image.getpixel((i, j))
+        #         pixel = (pixel[0], 0, 0)
+        #         self.image.putpixel((i, j), pixel)
+
         self.history.append(copy(self.image))
 
     def rotate_90(self):
@@ -79,9 +88,10 @@ class ImageProcess(ImageEditor):
     def show(self):
         # if self.image is None:
         self.open()
+        self.show_()
 
+    def show_(self):
         self.image_area.hide()
-
         # !Kjell se her
         image = ImageQt.ImageQt(self.image)
         pixmapimage = QPixmap.fromImage(image)
@@ -92,10 +102,34 @@ class ImageProcess(ImageEditor):
         self.image_area.setPixmap(self.pixmapimage)
         self.image_area.show()
 
+    def grey(self):
+        super().grey()
+        self.show_()
+
+    def rotate_90(self):
+        super().rotate_90()
+        self.show_()
+
+    def rotate_270(self):
+        super().rotate_270()
+        self.show_()
+
+    def blur(self):
+        super().blur()
+        self.show_()
+
+    def mirror(self):
+        super().mirror()
+        self.show_()
+
+    def flip(self):
+        super().flip()
+        self.show_()
+
 
 if __name__ == "__main__":
     imageEditor = ImageEditor("../images/original.jpg")
     imageEditor.grey()
-    imageEditor.mirror()
+    # imageEditor.mirror()
     # imageEditor.blur()
     imageEditor.show()

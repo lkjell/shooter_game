@@ -41,25 +41,24 @@ def showFilenameList():
     filenames = cwd.iterdir()
 
     filenames = find_image_files(filenames, extensions)
+    image_list.clear()
     for f in filenames:
         image_list.addItem(str(f.name))
 
 
+image_process = None
+
+
 def select_image(image_name):
     image_path = str(cwd / image_name)
-    im = ImageProcess(image_path, image_area)
-    # im.filename = image_path
-    im.show()
-    # try:
-    #     tags = note_db[note_name]["tags"]
-    #     note_text = note_db[note_name]["text"]
-    #     note_text_edit.setText(note_text)
-    #
-    #     tag_list.clear()
-    #     for t in tags:
-    #         tag_list.addItem(t)
-    # except KeyError:
-    #     pass
+    global image_process
+    image_process = ImageProcess(image_path, image_area)
+    image_process.show()
+
+    black_and_white_btn.clicked.connect(image_process.grey)
+    left_btn.clicked.connect(image_process.rotate_90)
+    right_btn.clicked.connect(image_process.rotate_270)
+    mirror_btn.clicked.connect(image_process.mirror)
 
 
 folder_btn.clicked.connect(showFilenameList)
@@ -75,6 +74,7 @@ right_btn = QPushButton("Right")
 mirror_btn = QPushButton("Mirror")
 sharpness_btn = QPushButton("Sharpness")
 black_and_white_btn = QPushButton("B&W")
+save_btn = QPushButton("Save")
 
 # layout 2
 button_layout = QHBoxLayout()
@@ -83,6 +83,7 @@ button_layout.addWidget(right_btn)
 button_layout.addWidget(mirror_btn)
 button_layout.addWidget(sharpness_btn)
 button_layout.addWidget(black_and_white_btn)
+button_layout.addWidget(save_btn)
 
 image_area = QLabel()
 
@@ -97,8 +98,6 @@ layout_main.addLayout(list_layout, 20)
 layout_main.addLayout(image_layout, 80)
 
 my_win.setLayout(layout_main)
-
-# im = ImageProcess("./", image_area)
 
 my_win.show()
 app.exec_()
