@@ -1,3 +1,4 @@
+#imagelib.py
 # package name is PILLOW
 from PIL import Image, ImageQt
 from PIL import ImageFilter
@@ -5,6 +6,7 @@ from copy import copy
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
+import numpy as np
 
 
 class ImageEditor:
@@ -32,8 +34,17 @@ class ImageEditor:
         if self.image is None:
             self.open()
 
-        self.image = self.image.convert("L")
-        # self.image = self.image.convert("RGB")
+        # self.image = self.image.convert("L")
+        self.image = copy(self.image_original)
+        self.image = self.image.convert("RGB")
+
+        data = self.image.getchannel(0)
+        data = tuple([tuple((d,0,0)) for d in data])
+        # data[:, [1, 2]] = 0
+        # data = tuple([tuple(d) for d in data])
+        #
+        self.image.putdata(data)
+
         #
         # x, y = self.image.size
         # for i in range(x):

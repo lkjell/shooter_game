@@ -8,10 +8,10 @@ pygame.init()
 pygame.display.set_caption("Catch")
 window = pygame.display.set_mode((700, 500))
 window.fill((80, 80, 80))
-print(type(window))
 
 # set scene background
 background = pygame.transform.scale(pygame.image.load("background.jpg"), (700, 500))
+
 
 # Set up background sound
 # mixer.init()
@@ -26,15 +26,17 @@ background = pygame.transform.scale(pygame.image.load("background.jpg"), (700, 5
 
 # create 2 sprites and place them on the scene
 class GameSprite(sprite.Sprite):
-    def __init__(self, window, image, x, y, speed):
+    def __init__(self, window, image, x, y, speed, width=65, height=65):
         super().__init__()
 
-        self.image = pygame.transform.scale(pygame.image.load(image), (65, 65))
+        self.width = width
+        self.height = height
+        self.image = pygame.transform.scale(pygame.image.load(image), (self.width, self.height))
         self.speed = speed
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.window = window # Parent
+        self.window = window  # Parent
 
     @property
     def x(self):
@@ -42,7 +44,7 @@ class GameSprite(sprite.Sprite):
 
     @x.setter
     def x(self, v):
-        if 0 < v < self.window.get_width()-65:
+        if 0 < v < self.window.get_width() - self.width:
             self.rect.x = v
 
     @property
@@ -51,7 +53,7 @@ class GameSprite(sprite.Sprite):
 
     @y.setter
     def y(self, v):
-        if 0 < v < 400:
+        if 0 < v < self.window.get_height() - self.height:
             self.rect.y = v
 
     def draw(self):
@@ -64,17 +66,18 @@ class GameSprite(sprite.Sprite):
         self.x += self.speed
 
     def move_up(self):
-        self.y -= self.speed
+        self.rect.y -= self.speed
 
     def move_down(self):
-        self.y += self.speed
+        self.rect.y += self.speed
 
 
-sprite1 = pygame.transform.scale(pygame.image.load("hero.png"), (100, 100))
-sprite2 = pygame.transform.scale(pygame.image.load("cyborg.png"), (100, 100))
+class Player(GameSprite):
+    def update(self):
+        pass
 
 sprite1 = GameSprite(window, "hero.png", 100, 100, 10)
-
+sprite2 = GameSprite(window, "cyborg.png", 100, 200, 10)
 
 x1 = 100
 y1 = 100
@@ -89,9 +92,8 @@ run = True
 
 while run:
     window.blit(background, (0, 0))
-    # window.blit(sprite1, (x1, y1))
-    # window.blit(sprite2, (x2, y2))
     sprite1.draw()
+    sprite2.draw()
 
     # handle "click on the "Close the window"" event
     for e in pygame.event.get():
@@ -109,14 +111,14 @@ while run:
     if key_pressed[pygame.K_s]:
         sprite1.move_down()
 
-    if key_pressed[pygame.K_LEFT] and x2 > 0:
-        x2 -= 10
-    if key_pressed[pygame.K_RIGHT] and x2 < 600:
-        x2 += 10
-    if key_pressed[pygame.K_UP] and y2 > 0:
-        y2 -= 10
-    if key_pressed[pygame.K_DOWN] and y2 < 400:
-        y2 += 10
+    if key_pressed[pygame.K_LEFT]:
+        sprite2.move_left()
+    if key_pressed[pygame.K_RIGHT]:
+        sprite2.move_right()
+    if key_pressed[pygame.K_UP]:
+        sprite2.move_up()
+    if key_pressed[pygame.K_DOWN]:
+        sprite2.move_down()
 
     pygame.display.update()
     clock.tick(FPS)

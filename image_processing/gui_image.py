@@ -1,3 +1,4 @@
+#gui_image.py
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout)
 
 from PyQt5.QtWidgets import QListWidget
@@ -86,6 +87,7 @@ button_layout.addWidget(black_and_white_btn)
 button_layout.addWidget(save_btn)
 
 image_area = QLabel()
+
 
 # layout 3
 image_layout = QVBoxLayout()
