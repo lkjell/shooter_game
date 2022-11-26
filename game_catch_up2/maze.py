@@ -97,23 +97,13 @@ class Enemy(GameSprite):
         self.y_org = y
         self.w = 100
         self.h = 100
-        self.rx = randint(-1, 1)
-        self.ry = randint(-1, 1)
+        self.rx = randint(-10, 10)
+        self.ry = randint(-10, 10)
 
     def move(self):
 
         self.x += self.rx*self.speed
-        print(self.x)
-        # self.y += self.ry*self.speed
-
-        # if self.direction == "right":
-        #     self.move_right()
-        # if self.direction == "left":
-        #     self.move_left()
-        # if self.direction == "up":
-        #     self.move_up()
-        # if self.direction == "down":
-        #     self.move_down()
+        self.y += self.ry*self.speed
 
     @GameSprite.x.setter
     def x(self, v):
@@ -123,26 +113,21 @@ class Enemy(GameSprite):
             self.rx = randint(-1, 1)
             self.ry = randint(-1, 1)
 
-        # if 0 < v < self.window.get_width() - self.width:
-        #     self.rect.x = v
-        # else:
-        #     if self.direction == "left":
-        #         self.direction = "right"
-        #     elif self.direction == "right":
-        #         self.direction = "left"
+            while self.rx == self.ry == 0:
+                self.rx = randint(-1, 1)
+                self.ry = randint(-1, 1)
 
     @GameSprite.y.setter
     def y(self, v):
         if self.y_org - self.h < v < self.y_org + self.h:
-            self.rect.x = v
+            self.rect.y = v
         else:
             self.rx = randint(-1, 1)
             self.ry = randint(-1, 1)
 
-        # if 0 < v < self.window.get_height() - self.height:
-        #     self.rect.y = v
-        # else:
-        #     pass
+            while self.rx == self.ry == 0:
+                self.rx = randint(-1, 1)
+                self.ry = randint(-1, 1)
 
 
 sprite1 = Player(window, "hero.png", 100, 100, 10)
