@@ -1,6 +1,7 @@
 # from pygame import *
 import pygame
 from pygame import mixer, sprite
+from random import randint
 
 pygame.init()
 
@@ -89,36 +90,63 @@ class Player(GameSprite):
 class Enemy(GameSprite):
     direction = "right"
 
+    def __init__(self, window, image, x, y, speed, width=65, height=65):
+        super().__init__(window, image, x, y, speed, width, height)
+
+        self.x_org = x
+        self.y_org = y
+        self.w = 100
+        self.h = 100
+        self.rx = randint(-1, 1)
+        self.ry = randint(-1, 1)
+
     def move(self):
-        if self.direction == "right":
-            self.move_right()
-        if self.direction == "left":
-            self.move_left()
-        if self.direction == "up":
-            self.move_up()
-        if self.direction == "down":
-            self.move_down()
+
+        self.x += self.rx*self.speed
+        print(self.x)
+        # self.y += self.ry*self.speed
+
+        # if self.direction == "right":
+        #     self.move_right()
+        # if self.direction == "left":
+        #     self.move_left()
+        # if self.direction == "up":
+        #     self.move_up()
+        # if self.direction == "down":
+        #     self.move_down()
 
     @GameSprite.x.setter
     def x(self, v):
-        if 0 < v < self.window.get_width() - self.width:
+        if self.x_org - self.w < v < self.x_org + self.w:
             self.rect.x = v
         else:
-            if self.direction == "left":
-                self.direction = "right"
-            elif self.direction == "right":
-                self.direction = "left"
+            self.rx = randint(-1, 1)
+            self.ry = randint(-1, 1)
+
+        # if 0 < v < self.window.get_width() - self.width:
+        #     self.rect.x = v
+        # else:
+        #     if self.direction == "left":
+        #         self.direction = "right"
+        #     elif self.direction == "right":
+        #         self.direction = "left"
 
     @GameSprite.y.setter
     def y(self, v):
-        if 0 < v < self.window.get_height() - self.height:
-            self.rect.y = v
+        if self.y_org - self.h < v < self.y_org + self.h:
+            self.rect.x = v
         else:
-            pass
+            self.rx = randint(-1, 1)
+            self.ry = randint(-1, 1)
+
+        # if 0 < v < self.window.get_height() - self.height:
+        #     self.rect.y = v
+        # else:
+        #     pass
 
 
 sprite1 = Player(window, "hero.png", 100, 100, 10)
-sprite2 = Enemy(window, "cyborg.png", 100, 200, 1)
+sprite2 = Enemy(window, "cyborg.png", 530, 250, 1)
 
 x1 = 100
 y1 = 100
