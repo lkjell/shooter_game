@@ -66,18 +66,32 @@ class GameSprite(sprite.Sprite):
         self.x += self.speed
 
     def move_up(self):
-        self.rect.y -= self.speed
+        self.y -= self.speed
 
     def move_down(self):
-        self.rect.y += self.speed
+        self.y += self.speed
 
 
 class Player(GameSprite):
-    def update(self):
+    def move(self):
+        key_pressed = pygame.key.get_pressed()
+
+        if key_pressed[pygame.K_a]:
+            self.move_left()
+        if key_pressed[pygame.K_d]:
+            self.move_right()
+        if key_pressed[pygame.K_w]:
+            self.move_up()
+        if key_pressed[pygame.K_s]:
+            self.move_down()
+
+
+class Enemy(GameSprite):
+    def move(self):
         pass
 
-sprite1 = GameSprite(window, "hero.png", 100, 100, 10)
-sprite2 = GameSprite(window, "cyborg.png", 100, 200, 10)
+sprite1 = Player(window, "hero.png", 100, 100, 10)
+sprite2 = Enemy(window, "cyborg.png", 100, 200, 10)
 
 x1 = 100
 y1 = 100
@@ -95,30 +109,32 @@ while run:
     sprite1.draw()
     sprite2.draw()
 
+    sprite1.move()
+
     # handle "click on the "Close the window"" event
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             run = False
 
-    key_pressed = pygame.key.get_pressed()
-
-    if key_pressed[pygame.K_a]:
-        sprite1.move_left()
-    if key_pressed[pygame.K_d]:
-        sprite1.move_right()
-    if key_pressed[pygame.K_w]:
-        sprite1.move_up()
-    if key_pressed[pygame.K_s]:
-        sprite1.move_down()
-
-    if key_pressed[pygame.K_LEFT]:
-        sprite2.move_left()
-    if key_pressed[pygame.K_RIGHT]:
-        sprite2.move_right()
-    if key_pressed[pygame.K_UP]:
-        sprite2.move_up()
-    if key_pressed[pygame.K_DOWN]:
-        sprite2.move_down()
+    # key_pressed = pygame.key.get_pressed()
+    #
+    # if key_pressed[pygame.K_a]:
+    #     sprite1.move_left()
+    # if key_pressed[pygame.K_d]:
+    #     sprite1.move_right()
+    # if key_pressed[pygame.K_w]:
+    #     sprite1.move_up()
+    # if key_pressed[pygame.K_s]:
+    #     sprite1.move_down()
+    #
+    # if key_pressed[pygame.K_LEFT]:
+    #     sprite2.move_left()
+    # if key_pressed[pygame.K_RIGHT]:
+    #     sprite2.move_right()
+    # if key_pressed[pygame.K_UP]:
+    #     sprite2.move_up()
+    # if key_pressed[pygame.K_DOWN]:
+    #     sprite2.move_down()
 
     pygame.display.update()
     clock.tick(FPS)
