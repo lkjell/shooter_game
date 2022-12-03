@@ -1,3 +1,4 @@
+import time
 # from pygame import *
 import pygame
 from pygame import mixer, sprite
@@ -22,9 +23,13 @@ kick = mixer.Sound("kick.ogg")
 # kick.play()
 
 money = mixer.Sound("money.ogg")
-
-
 # money.play()
+
+# Set up fonts text
+pygame.font.init()
+font = pygame.font.Font(None, 70)
+win_text = font.render("YOU WIN", True, (255, 215, 0))
+lose_text = font.render("GAME OVER", True, (180, 215, 0))
 
 # create 2 sprites and place them on the scene
 class GameSprite(sprite.Sprite):
@@ -194,9 +199,26 @@ while run:
         if pygame.sprite.collide_rect(player, wall):
             kick.play()
             player.reset()
+            window.blit(lose_text, (200, 200))
+            pygame.display.update()
+            time.sleep(5)
+
+            # while True:
+            #
+            #     key_pressed = pygame.key.get_pressed()
+            #
+            #     if key_pressed[pygame.K_a]:
+            #         print("Heli")
+            #         break
+            #
+            #     pygame.display.update()
+            #     clock.tick(FPS)
+
 
     if pygame.sprite.collide_rect(player, treasure):
         money.play()
+        window.blit(win_text, (200, 200))
+        run = False
 
     # handle "click on the "Close the window"" event
     for e in pygame.event.get():
@@ -205,5 +227,13 @@ while run:
 
     pygame.display.update()
     clock.tick(FPS)
+
+run = True
+while run:
+    pygame.display.update()
+    clock.tick(FPS)
+    for e in pygame.event.get():
+        if e.type == pygame.QUIT:
+            run = False
 
 pygame.display.quit()
