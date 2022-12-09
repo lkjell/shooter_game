@@ -16,8 +16,8 @@ background = pygame.transform.scale(pygame.image.load("background.jpg"), (700, 5
 
 # Set up background sound
 mixer.init()
-# mixer.music.load("jungles.ogg")
-# mixer.music.play()
+mixer.music.load("jungles.ogg")
+mixer.music.play()
 
 kick = mixer.Sound("kick.ogg")
 # kick.play()
