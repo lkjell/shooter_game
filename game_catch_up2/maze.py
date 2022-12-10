@@ -31,6 +31,7 @@ font = pygame.font.Font(None, 70)
 win_text = font.render("YOU WIN", True, (255, 215, 0))
 lose_text = font.render("GAME OVER", True, (180, 215, 0))
 
+
 # create 2 sprites and place them on the scene
 class GameSprite(sprite.Sprite):
     def __init__(self, window, image, x, y, speed, width=65, height=65):
@@ -201,19 +202,20 @@ while run:
             player.reset()
             window.blit(lose_text, (200, 200))
             pygame.display.update()
-            time.sleep(5)
+            # time.sleep(5)
 
-            # while True:
-            #
-            #     key_pressed = pygame.key.get_pressed()
-            #
-            #     if key_pressed[pygame.K_a]:
-            #         print("Heli")
-            #         break
-            #
-            #     pygame.display.update()
-            #     clock.tick(FPS)
+            while True:
 
+                key_pressed = pygame.key.get_pressed()
+
+                print(key_pressed[pygame.K_e])
+
+                if key_pressed[pygame.K_e]:
+                    print("Heli")
+                    break
+
+                pygame.display.update()
+                clock.tick(FPS)
 
     if pygame.sprite.collide_rect(player, treasure):
         money.play()
@@ -226,7 +228,7 @@ while run:
             run = False
 
     pygame.display.update()
-    clock.tick(FPS)
+    clock.tisk(FPS)
 
 run = True
 while run:
