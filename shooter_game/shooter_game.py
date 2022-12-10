@@ -1,4 +1,4 @@
-#Create your own shooter
+# Create your own shooter
 
 import time
 # from pygame import *
@@ -16,12 +16,13 @@ window.fill((80, 80, 80))
 # set scene background
 background = pygame.transform.scale(pygame.image.load("galaxy.jpg"), (700, 500))
 
-# Set up background sound
-mixer.init()
-mixer.music.load("space.ogg")
-mixer.music.play()
 
-fire = mixer.Sound("fire.ogg")
+# Set up background sound
+# mixer.init()
+# mixer.music.load("space.ogg")
+# mixer.music.play()
+#
+# fire = mixer.Sound("fire.ogg")
 # kick.play()
 
 # # Set up fonts text
@@ -33,6 +34,8 @@ fire = mixer.Sound("fire.ogg")
 
 # create 2 sprites and place them on the scene
 class GameSprite(sprite.Sprite):
+    destroy = False
+
     def __init__(self, window, image, x, y, speed, width=65, height=65):
         super().__init__()
 
@@ -65,6 +68,8 @@ class GameSprite(sprite.Sprite):
     def y(self, v):
         if 0 < v < self.window.get_height() - self.height:
             self.rect.y = v
+        else:
+            self.destroy = True
 
     def draw(self):
         self.window.blit(self.image, (self.x, self.y))
@@ -87,6 +92,11 @@ class GameSprite(sprite.Sprite):
 
 
 class Player(GameSprite):
+    def __init__(self, window, image, x, y, speed, width=65, height=65):
+        super().__init__(window, image, x, y, speed, width, height)
+        self.bullets = []
+        self.fire_guard = False
+
     def move(self):
         key_pressed = pygame.key.get_pressed()
 
@@ -94,46 +104,76 @@ class Player(GameSprite):
             self.move_left()
         if key_pressed[pygame.K_d]:
             self.move_right()
-        if key_pressed[pygame.K_w]:
-            self.move_up()
-        if key_pressed[pygame.K_s]:
-            self.move_down()
-
-
-class Enemy(GameSprite):
-    def __init__(self, window, image, x, y, speed, width=65, height=65):
-        super().__init__(window, image, x, y, speed, width, height)
-
-        self.w = 80
-        self.h = 100
-        self.rx = randint(-10, 10)
-        self.ry = randint(-10, 10)
-
-        self.rx = 1
-
-    def move(self):
-
-        self.x += self.rx * self.speed
-        # self.y += self.ry*self.speed
-
-    @GameSprite.x.setter
-    def x(self, v):
-        if self.x_org - self.w < v < self.x_org + self.w:
-            self.rect.x = v
+        # if key_pressed[pygame.K_w]:
+        #     self.move_up()
+        # if key_pressed[pygame.K_s]:
+        #     self.move_down()
+        if key_pressed[pygame.K_SPACE]:
+            self.fire()
+            self.fire_guard = True
         else:
-            self.rx *= -1
+            self.fire_guard = False
+
+    def fire(self):
+        bsizex = 10
+        bsizey = 10
+        x = self.x + self.width // 2 - bsizex // 2 + 1
+        if not self.fire_guard:
+            self.bullets.append(Bullet(window, "bullet.png", x, self.y, 5, bsizex, bsizey))
+
+    def draw(self):
+        super().draw()
+
+        for bullet in self.bullets:
+            bullet.draw()
+            if bullet.destroy:
+                self.bullets.remove(bullet)
+
+        # try:
+        #     self.bullet.draw()
+        # except AttributeError:
+        #     pass
+
+
+key_pressed = pygame.key.get_pressed()
+
+
+class Bullet(GameSprite):
+    # destroy = False
+
+    # def __init__(self, window, image, x, y, speed, width=10, height=10):
+    #     super().__init__(window, image, x, y, speed, width, height)
+    #     self.destroy = False
+
+    def draw(self):
+        self.move_up()
+        super().draw()
 
     @GameSprite.y.setter
     def y(self, v):
-        if self.y_org - self.h < v < self.y_org + self.h:
+        if 0 < v < self.window.get_height() - self.height:
             self.rect.y = v
-        else:
-            self.rx = randint(-1, 1)
-            self.ry = randint(-1, 1)
+        # else:
+        #     self.destroy = True
 
-            while self.rx == self.ry == 0:
-                self.rx = randint(-1, 1)
-                self.ry = randint(-1, 1)
+
+class Enemy(GameSprite):
+    # destroy = False
+
+    def __init__(self, window, image, x, y, speed, width=65, height=65):
+        super().__init__(window, image, x, y, speed, width, height)
+
+    def draw(self):
+        if not self.destroy:
+            self.move_down()
+            super().draw()
+
+    @GameSprite.y.setter
+    def y(self, v):
+        if 0 < v < self.window.get_height() - self.height:
+            self.rect.y = v
+        # else:
+        #     self.destroy = True
 
 
 class Wall(sprite.Sprite):
@@ -165,9 +205,8 @@ wall2 = Wall(window, 220, 120, 10, 350, (154, 205, 50))
 wall3 = Wall(window, 340, 20, 10, 350, (154, 205, 50))
 wall4 = Wall(window, 440, 120, 10, 350, (154, 205, 50))
 
-player = Player(window, "rocket.png", 300, 400, 5)
-# enemy = Enemy(window, "cyborg.png", 530, 250, 2)
-# treasure = GameSprite(window, "treasure.png", 530, 430, 0)
+player = Player(window, "rocket.png", 350 - 65 // 2, 400, 5)
+enemy = Enemy(window, "ufo.png", 330, 50, 2, 100, 65)
 
 x1 = 100
 y1 = 100
@@ -182,8 +221,10 @@ run = True
 i = 1
 while run:
     window.blit(background, (0, 0))
-    player.draw()
     player.move()
+    player.draw()
+
+    enemy.draw()
 
     # handle "click on the "Close the window"" event
     for e in pygame.event.get():
@@ -192,4 +233,3 @@ while run:
 
     pygame.display.update()
     clock.tick(FPS)
-
