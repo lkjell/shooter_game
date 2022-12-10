@@ -149,20 +149,15 @@ class Bullet(GameSprite):
         self.move_up()
         super().draw()
 
-    @GameSprite.y.setter
-    def y(self, v):
-        if 0 < v < self.window.get_height() - self.height:
-            self.rect.y = v
-        # else:
-        #     self.destroy = True
+    # @GameSprite.y.setter
+    # def y(self, v):
+    #     if 0 < v < self.window.get_height() - self.height:
+    #         self.rect.y = v
+    # else:
+    #     self.destroy = True
 
 
 class Enemy(GameSprite):
-    # destroy = False
-
-    def __init__(self, window, image, x, y, speed, width=65, height=65):
-        super().__init__(window, image, x, y, speed, width, height)
-
     def draw(self):
         if not self.destroy:
             self.move_down()
@@ -170,10 +165,10 @@ class Enemy(GameSprite):
 
     @GameSprite.y.setter
     def y(self, v):
-        if 0 < v < self.window.get_height() - self.height:
+        if v < self.window.get_height() - self.height:
             self.rect.y = v
-        # else:
-        #     self.destroy = True
+        else:
+            self.destroy = True
 
 
 class Wall(sprite.Sprite):
@@ -200,13 +195,49 @@ class Wall(sprite.Sprite):
             self.window.blit(self.wall, (self.x, self.y))
 
 
+class EnemyHandler:
+    def __init__(self, N):
+        self.enemies = []
+        self.N = N
+
+    def max_check(self):
+        max = 0
+
+        if len(self.enemies) == 0:
+            return True
+
+        for e in self.enemies:
+            if max < e.y:
+                max = e.y
+
+        return max > 200
+
+    def spawn(self):
+        N = len(self.enemies)
+        r = randint(0, self.N - N)
+
+        if self.max_check():
+            for _ in range(r):
+                x = randint(100, 600)
+                self.enemies.append(Enemy(window, "ufo.png", x, 0, 1, 100, 65))
+
+    def draw(self):
+        self.spawn()
+
+        for e in self.enemies:
+            e.draw()
+            if e.destroy:
+                self.enemies.remove(e)
+
+
 wall1 = Wall(window, 100, 20, 10, 350, (154, 205, 50))
 wall2 = Wall(window, 220, 120, 10, 350, (154, 205, 50))
 wall3 = Wall(window, 340, 20, 10, 350, (154, 205, 50))
 wall4 = Wall(window, 440, 120, 10, 350, (154, 205, 50))
 
 player = Player(window, "rocket.png", 350 - 65 // 2, 400, 5)
-enemy = Enemy(window, "ufo.png", 330, 50, 2, 100, 65)
+# enemy = Enemy(window, "ufo.png", 330, -200, 2, 100, 65)
+enemy = EnemyHandler(6)
 
 x1 = 100
 y1 = 100
@@ -225,6 +256,9 @@ while run:
     player.draw()
 
     enemy.draw()
+
+    # collide
+    # pygame.sprite.collide_rect(player, wall)
 
     # handle "click on the "Close the window"" event
     for e in pygame.event.get():
