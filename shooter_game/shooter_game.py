@@ -208,6 +208,7 @@ class EnemyHandler:
     def __init__(self, N):
         self.enemies = []
         self.N = N
+        self.miss_ufo = 0
 
     def __getitem__(self, item):
         return self.enemies[item]
@@ -237,7 +238,7 @@ class EnemyHandler:
         if self.max_check():
             for _ in range(r):
                 x = randint(100, 600)
-                speed = randint(1, 3)
+                speed = randint(1, 1)
                 self.enemies.append(Enemy(window, "ufo.png", x, -65, speed, 100, 65))
 
     def draw(self):
@@ -246,6 +247,8 @@ class EnemyHandler:
         for e in self.enemies:
             e.draw()
             if e.destroy:
+                self.miss_ufo += 1
+                print(f"{self.miss_ufo=}")
                 self.enemies.remove(e)
 
 
@@ -258,17 +261,14 @@ player = Player(window, "rocket.png", 350 - 65 // 2, 400, 5)
 # enemy = Enemy(window, "ufo.png", 330, -200, 2, 100, 65)
 enemies = EnemyHandler(6)
 
-x1 = 100
-y1 = 100
-
-x2 = 200
-y2 = 100
+# Game variable
+# miss_ufo = 0
+score = 0
 
 clock = pygame.time.Clock()
 FPS = 60
 
 run = True
-i = 1
 while run:
     window.blit(background, (0, 0))
     player.move()
@@ -284,9 +284,14 @@ while run:
             if pygame.sprite.collide_rect(b, e):
                 player.remove(b)
                 enemies.remove(e)
+                score += 1
+                print(f"{score=}")
                 break
 
-
+    # for e in enemies:
+    #     if pygame.sprite.collide_rect(player, e):
+    #         run = False
+    #         break
 
     # handle "click on the "Close the window"" event
     for e in pygame.event.get():
