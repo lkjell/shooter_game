@@ -18,18 +18,20 @@ background = pygame.transform.scale(pygame.image.load("galaxy.jpg"), (700, 500))
 
 
 # Set up background sound
-# mixer.init()
-# mixer.music.load("space.ogg")
-# mixer.music.play()
+mixer.init()
+mixer.music.load("space.ogg")
+mixer.music.play()
 #
-# fire = mixer.Sound("fire.ogg")
+fire = mixer.Sound("fire.ogg")
 # kick.play()
 
 # # Set up fonts text
-# pygame.font.init()
-# font = pygame.font.Font(None, 70)
-# win_text = font.render("YOU WIN", True, (255, 215, 0))
-# lose_text = font.render("GAME OVER", True, (180, 215, 0))
+pygame.font.init()
+font = pygame.font.Font(None, 70)
+win_text = font.render("YOU WIN", True, (255, 215, 0))
+lose_text = font.render("GAME OVER", True, (180, 215, 0))
+
+font_score = pygame.font.Font(None, 32)
 
 
 # create 2 sprites and place them on the scene
@@ -126,6 +128,7 @@ class Player(GameSprite):
         x = self.x + self.width // 2 - bsizex // 2 + 1
         if not self.fire_guard:
             self.bullets.append(Bullet(window, "bullet.png", x, self.y, 5, bsizex, bsizey))
+            fire.play()
 
     def draw(self):
         super().draw()
@@ -279,13 +282,14 @@ FPS = 60
 run = True
 while run:
     window.blit(background, (0, 0))
+
+
     player.move()
     player.draw()
 
     enemies.draw()
 
     # collide
-    # pygame.sprite.collide_rect(player, wall)
 
     for b in player:
         for e in enemies:
@@ -296,10 +300,24 @@ while run:
                 print(f"{score=}")
                 break
 
-    # for e in enemies:
-    #     if pygame.sprite.collide_rect(player, e):
-    #         run = False
-    #         break
+    score_txt = font_score.render(f"score: {score}", True, (255, 255, 255))
+    miss_ufo_txt = font_score.render(f"miss: {enemies.miss_ufo}", True, (255, 255, 255))
+
+    window.blit(score_txt, (10, 10))
+    window.blit(miss_ufo_txt, (10, 30))
+
+    if score == 10:
+        window.blit(win_text, (200, 300))
+        run = False
+
+    if enemies.miss_ufo == 5:
+        window.blit(lose_text, (200, 300))
+        # run = False
+        enemies.miss_ufo = 0
+        score = 0
+        enemies.enemies.clear()
+        player.bullets.clear()
+        pygame.time.delay(2000)
 
     # handle "click on the "Close the window"" event
     for e in pygame.event.get():
@@ -308,3 +326,8 @@ while run:
 
     pygame.display.update()
     clock.tick(FPS)
+
+# pygame.display.update()
+
+while True:
+    time.sleep(1)
