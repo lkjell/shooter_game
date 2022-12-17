@@ -232,14 +232,22 @@ class EnemyHandler:
         return max > 200
 
     def spawn(self):
+        if not self.max_check():
+            return
+
         N = len(self.enemies)
         r = randint(0, self.N - N)
 
-        if self.max_check():
-            for _ in range(r):
-                x = randint(100, 600)
-                speed = randint(1, 1)
-                self.enemies.append(Enemy(window, "ufo.png", x, -65, speed, 100, 65))
+        for _ in range(r):
+            x = randint(100, 600)
+            speed = randint(1, 3)
+            enemy = Enemy(window, "ufo.png", x, -65, speed, 100, 65)
+
+            for e in self.enemies:
+                if pygame.sprite.collide_rect(enemy, e):
+                    break
+            else:
+                self.enemies.append(enemy)
 
     def draw(self):
         self.spawn()
