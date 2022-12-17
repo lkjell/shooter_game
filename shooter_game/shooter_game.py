@@ -97,6 +97,12 @@ class Player(GameSprite):
         self.bullets = []
         self.fire_guard = False
 
+    def __iter__(self):
+        return self.bullets.__iter__()
+
+    def remove(self, v):
+        self.bullets.remove(v)
+
     def move(self):
         key_pressed = pygame.key.get_pressed()
 
@@ -125,6 +131,7 @@ class Player(GameSprite):
         super().draw()
 
         for bullet in self.bullets:
+            bullet.update()
             bullet.draw()
             if bullet.destroy:
                 self.bullets.remove(bullet)
@@ -145,16 +152,18 @@ class Bullet(GameSprite):
     #     super().__init__(window, image, x, y, speed, width, height)
     #     self.destroy = False
 
-    def draw(self):
+    def update(self):
         self.move_up()
+
+    def draw(self):
         super().draw()
 
-    # @GameSprite.y.setter
-    # def y(self, v):
-    #     if 0 < v < self.window.get_height() - self.height:
-    #         self.rect.y = v
-    # else:
-    #     self.destroy = True
+    @GameSprite.y.setter
+    def y(self, v):
+        if 0 < v < self.window.get_height() - self.height:
+            self.rect.y = v
+        else:
+            self.destroy = True
 
 
 class Enemy(GameSprite):
@@ -200,6 +209,15 @@ class EnemyHandler:
         self.enemies = []
         self.N = N
 
+    def __getitem__(self, item):
+        return self.enemies[item]
+
+    def __iter__(self):
+        return self.enemies.__iter__()
+
+    def remove(self, v):
+        self.enemies.remove(v)
+
     def max_check(self):
         max = 0
 
@@ -219,7 +237,8 @@ class EnemyHandler:
         if self.max_check():
             for _ in range(r):
                 x = randint(100, 600)
-                self.enemies.append(Enemy(window, "ufo.png", x, 0, 1, 100, 65))
+                speed = randint(1, 3)
+                self.enemies.append(Enemy(window, "ufo.png", x, -65, speed, 100, 65))
 
     def draw(self):
         self.spawn()
@@ -237,7 +256,7 @@ wall4 = Wall(window, 440, 120, 10, 350, (154, 205, 50))
 
 player = Player(window, "rocket.png", 350 - 65 // 2, 400, 5)
 # enemy = Enemy(window, "ufo.png", 330, -200, 2, 100, 65)
-enemy = EnemyHandler(6)
+enemies = EnemyHandler(6)
 
 x1 = 100
 y1 = 100
@@ -255,10 +274,19 @@ while run:
     player.move()
     player.draw()
 
-    enemy.draw()
+    enemies.draw()
 
     # collide
     # pygame.sprite.collide_rect(player, wall)
+
+    for b in player:
+        for e in enemies:
+            if pygame.sprite.collide_rect(b, e):
+                player.remove(b)
+                enemies.remove(e)
+                break
+
+
 
     # handle "click on the "Close the window"" event
     for e in pygame.event.get():
